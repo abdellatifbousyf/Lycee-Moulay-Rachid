@@ -3,77 +3,145 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+
+// ✅ Middleware الأساسية من لارافيل
+use Illuminate\Http\Middleware\TrustProxies;
+use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance;
+use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
+use Illuminate\Foundation\Http\Middleware\TrimStrings;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+use Illuminate\Auth\Middleware\RequirePassword;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
+use Illuminate\Http\Middleware\SetCacheHeaders;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\ValidateSignature;
 
 // ✅ Exception Classes للتعامل مع الأخطاء
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Throwable;
 
+// ✅ Middleware المخصصة ديال مشروع 4ayab
+use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\EnsureEmailVerifiedAndRole;
+
 return Application::configure(basePath: dirname(__DIR__))
+
+    // ─────────────────────────────────────────────────────────────
+    // 🗂️ Routing Configuration
+    // ─────────────────────────────────────────────────────────────
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',      // ✅ إذا كنت تستعمل API
-        commands: __DIR__.'/../routes/console.php', // ✅ للـ Schedule
-        health: '/up',                          // ✅ Health check endpoint
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
     )
 
     // ─────────────────────────────────────────────────────────────
-    // ⚙️ Middleware Configuration
+    // ⚙️ Middleware Configuration (بديل Http/Kernel.php)
     // ─────────────────────────────────────────────────────────────
     ->withMiddleware(function (Middleware $middleware) {
 
-        // ✅ 1. تسجيل استثناءات وضع الصيانة (بديل $except القديم)
-        $middleware->preventRequestsDuringMaintenance(
-            except: [
-                // 🏥 Health & Monitoring
-                'api/health',
-                'up',
+        // ✅ 1. Global Middleware Stack (كيديزو على كل الطلبات)
+        $middleware->use([
+            TrustProxies::class,                    // ← الثقة فـ الـ Proxies (Cloudflare, Nginx...)
+            HandleCors::class,                      // ← دعم CORS للـ API
+            PreventRequestsDuringMaintenance::class,// ← وضع الصيانة
+            ValidatePostSize::class,                // ← التحقق من حجم الـ POST
+            TrimStrings::class,                     // ← تقليم النصوص (إلا اللي فـ $except)
+            ConvertEmptyStringsToNull::class,       // ← تحويل "" لـ null
+        ]);
 
-                // 🔐 Admin Bypass (للدخول أثناء الصيانة)
-                'admin/maintenance-bypass',
+        // ✅ 2. Web Middleware Group (للصفحات العادية - الواجهة الأمامية)
+        $middleware->web(append: [
+            EncryptCookies::class,                  // ← تشفير الكوكيز
+            AddQueuedCookiesToResponse::class,      // ← إضافة الكوكيز للـ Response
+            StartSession::class,                    // ← بدء الجلسة
+            ShareErrorsFromSession::class,          // ← مشاركة أخطاء الـ Validation
+            \App\Http\Middleware\VerifyCsrfToken::class, // ← حماية CSRF
+            SubstituteBindings::class,              // ← ربط الـ Route Parameters بالـ Models
+        ]);
 
-                // 🔗 External Webhooks (GitHub, Stripe, Payment...)
-                'webhook/*',
-                'stripe/*',
+        // ✅ 3. API Middleware Group (للـ API - ما فيهاش جلسات ولا CSRF)
+        $middleware->api(prepend: [], append: [
+            'throttle:api',                         // ← تحديد عدد الطلبات (60/دقيقة)
+            SubstituteBindings::class,              // ← ربط الـ Parameters
+        ]);
 
-                // 🎯 مشروع 4ayab: مزامنة الغياب الأوتوماتيكية
-                'absence/webhook/sync',
-                'api/sync/*',
-            ]
-        );
+        // ✅ 4. Middleware Group مخصص: 'admin' (للوحة التحكم)
+        $middleware->group('admin', [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            SubstituteBindings::class,
+            'auth',                                  // ← مصادقة
+            'role:1',                                // ← دور الأدمن فقط
+        ]);
 
-        // ✅ 2. تسجيل الـ Middleware المخصصة (Aliases)
+        // ✅ 5. Route Middleware Aliases (للاستخدام فـ الـ Routes)
         $middleware->alias([
-            'auth' => \App\Http\Middleware\Authenticate::class,
+            // 🔐 Auth Middleware
+            'auth' => Authenticate::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'auth.basic' => AuthenticateWithBasicAuth::class,
+            'password.confirm' => RequirePassword::class,
+            'verified' => EnsureEmailIsVerified::class,
 
-            // 🎯 مشروع 4ayab: Middleware للأدوار
-            'role' => \App\Http\Middleware\CheckRole::class,
-            'verified.role' => \App\Http\Middleware\EnsureEmailVerifiedAndRole::class,
+            // 🔑 Authorization
+            'can' => Authorize::class,
 
-            // 🔒 CSRF Protection استثناءات
-            // 'csrf' => \App\Http\Middleware\VerifyCsrfToken::class,
+            // 🛡️ Security & Routing
+            'bindings' => SubstituteBindings::class,
+            'cache.headers' => SetCacheHeaders::class,
+            'signed' => ValidateSignature::class,
+            'throttle' => ThrottleRequests::class,
+
+            // 🎯 مشروع 4ayab: Middleware مخصصة
+            'role' => CheckRole::class,                      // ← التحقق من الدور (1,2,3,4)
+            'verified.role' => EnsureEmailVerifiedAndRole::class, // ← إيميل مؤكد + دور
         ]);
 
-        // ✅ 3. استثناءات حماية CSRF (بديل $except فـ VerifyCsrfToken)
+        // ✅ 6. استثناءات حماية CSRF (بديل $except فـ VerifyCsrfToken)
         $middleware->validateCsrfTokens(except: [
-            'api/*',                    // ✅ API routes ما تحتاجش CSRF
-            'webhook/*',                // ✅ Webhooks خارجية
-            'stripe/*',                 // ✅ مدفوعات Stripe
-            'absence/webhook/sync',     // ✅ مزامنة 4ayab
+            'api/*',                        // ← API routes ما تحتاجش CSRF
+            'webhook/*',                    // ← Webhooks خارجية
+            'stripe/*', 'paypal/*',         // ← بوابات الدفع
+            'absence/webhook/sync',         // ← مزامنة الغياب (4ayab)
+            'api/sync/*',                   // ← مزامنة إضافية
         ]);
 
-        // ✅ 4. تسجيل أي Middleware إضافي فـ الـ Stack
-        // $middleware->append(\App\Http\Middleware\CustomLog::class);
-        // $middleware->prepend(\App\Http\Middleware\BeforeAuth::class);
+        // ✅ 7. استثناءات وضع الصيانة (بديل $except فـ CheckForMaintenanceMode)
+        $middleware->preventRequestsDuringMaintenance(except: [
+            'api/health',                   // ← Health check للـ Monitoring
+            'up',                           // ← صفحة الحالة
+            'admin/maintenance-bypass',     // ← دخول الأدمن أثناء الصيانة
+            'webhook/*',                    // ← Webhooks خارجية
+            'stripe/*', 'paypal/*',         // ← مدفوعات
+            'absence/webhook/sync',         // ← مزامنة 4ayab
+            'api/sync/*',                   // ← مزامنة إضافية
+        ]);
+
+        // ✅ 8. throttle configuration للـ API (60 طلب/دقيقة لكل IP)
+        $middleware->throttleApi(60, 1);
 
     })
 
     // ─────────────────────────────────────────────────────────────
-    // 🚨 Exception Handling Configuration (بديل Handler.php)
+    // 🚨 Exception Handling Configuration (بديل Exceptions/Handler.php)
     // ─────────────────────────────────────────────────────────────
     ->withExceptions(function (Exceptions $exceptions) {
 
@@ -81,15 +149,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->dontFlash([
             'password',
             'password_confirmation',
-            'current_password',     // ✅ لـ تغيير الباسوورد
-            'new_password',         // ✅ إضافي لـ 4ayab
+            'current_password',     // ← لـ تغيير الباسوورد
+            'new_password',         // ← إضافي لـ 4ayab
         ]);
 
         // ✅ 2. الأخطاء اللي ما كيتلوجاش (بديل: $dontReport)
         $exceptions->dontReport([
-            NotFoundHttpException::class,           // 404 - عادي
+            NotFoundHttpException::class,           // ← 404 - عادي، ما يحتاجش لوغ
             // ModelNotFoundException::class,        // ⚠️ سجلها إذا بغيتي تتبع الروابط المكسورة
-            // \Illuminate\Validation\ValidationException::class, // ✅ لارافيل كيحيدو أوتوماتيكياً
         ]);
 
         // ✅ 3. تخصيص الـ Render للاستثناءات (بديل: render() method)
@@ -129,7 +196,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             // 🎯 ج) خطأ "غير مصرح" (403)
-            if ($e instanceof \Illuminate\Auth\Access\AuthorizationException) {
+            if ($e instanceof AuthorizationException) {
 
                 if ($request->expectsJson()) {
                     return response()->json([
@@ -174,7 +241,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     'user_agent' => request()->userAgent(),
                 ]);
 
-                // ✅ (اختياري) إرسال تنبيه لـ Slack / Email / Discord
+                // ✅ (اختياري) إرسال تنبيه لـ Slack / Email / Discord فـ الإنتاج
                 // if (config('app.env') === 'production') {
                 //     \Illuminate\Support\Facades\Notification::send(
                 //         new \App\Models\User(['email' => config('app.admin_email')]),
