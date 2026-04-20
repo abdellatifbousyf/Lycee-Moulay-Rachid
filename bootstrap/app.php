@@ -31,7 +31,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Throwable;
+//use Throwable;
 
 // ✅ Middleware المخصصة ديال مشروع 4ayab
 use App\Http\Middleware\CheckRole;
@@ -44,7 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
     // ─────────────────────────────────────────────────────────────
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
+       // api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
