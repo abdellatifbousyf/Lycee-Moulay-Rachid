@@ -15,7 +15,7 @@ class VerifyCsrfToken extends Middleware
      *
      * @var array<int, string>
      */
-    protected array $except = [
+    protected  $except = [
         // ✅ آمنة للإستثناء (اختياري - حسب الحاجة):
 
         // 🔗 API Routes (إذا كنت كتستعمل توكنات أو JWT)

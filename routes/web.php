@@ -65,3 +65,7 @@ Route::middleware(['auth'])
 Route::fallback(function () {
     return response()->view('errors.404', [], 404);
 });
+// ✅ Route لصفحة الاتصال (مؤقتة)
+Route::get('/contact', function () {
+    return back()->with('info', 'Page de contact en cours de développement.');
+})->name('contact');
