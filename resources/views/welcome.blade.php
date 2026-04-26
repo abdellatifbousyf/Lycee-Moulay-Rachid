@@ -5,13 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}"> {{-- ✅ ضروري لـ AJAX --}}
-
     <title>{{ config('app.name', '4ayab') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for professional icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Styles -->
     <style>
@@ -39,6 +41,31 @@
             min-height: 100vh;
             text-align: center;
         }
+
+        /* 🎓 Professional Educational Icon */
+        .brand-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), #7c3aed);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 40px rgba(79, 70, 229, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .brand-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
         .title {
             font-size: 3rem;
             font-weight: 700;
@@ -97,6 +124,8 @@
         @media (max-width: 640px) {
             .title { font-size: 2rem; }
             .auth-links { position: static; margin-bottom: 1rem; }
+            .brand-icon { width: 60px; height: 60px; }
+            .brand-icon i { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -118,7 +147,12 @@
 
         {{-- 🎯 المحتوى الرئيسي --}}
         <div>
-            <h1 class="title">{{ config('app.name', '4ayab') }}</h1>
+            {{-- 🎓 الأيقونة الاحترافية التعليمية --}}
+            <div class="brand-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+
+            <h1 class="title"> (ثانوية مولاي رشيد التأهيلية ـ أجلموس) </h1>
             <p class="subtitle">نظام تتبع الغياب الذكي للمؤسسات التعليمية</p>
 
             {{-- <div class="links">

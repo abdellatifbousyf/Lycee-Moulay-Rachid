@@ -1,4 +1,4 @@
-{{-- ✅ المسار: resources/views/admin/dashboard.blade.php --}}
+//- ✅ المسار: resources/views/admin/dashboard.blade.php --}}
 @extends('layouts.admin')
 
 @section('content')
