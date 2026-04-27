@@ -15,7 +15,6 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     @endif
-
                     {{ __('You are logged in!') }}
                 </div>
             </div>

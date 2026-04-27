@@ -236,7 +236,7 @@
                                 <div class="register-brand-icon">
                                     <i class="fas fa-user-plus"></i>
                                 </div>
-                                <h2 class="register-brand-title">{{ config('app.name', '4ayab') }}</h2>
+                                <h2 class="register-brand-title"> ثانوية مولاي رشيد  </h2>
                                 <p class="register-brand-subtitle">{{ __('إنشاء حساب جديد') }}</p>
                             </div>
                         </div>

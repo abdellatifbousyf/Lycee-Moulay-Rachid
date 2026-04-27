@@ -275,7 +275,7 @@
                                 <div class="verify-brand-icon">
                                     <i class="fas fa-envelope"></i>
                                 </div>
-                                <h2 class="verify-brand-title">{{ config('app.name', '4ayab') }}</h2>
+                                <h2 class="verify-brand-title">(ثانوية مولاي رشيد)</h2>
                                 <p class="verify-brand-subtitle">{{ __('التحقق من البريد الإلكتروني') }}</p>
                             </div>
 

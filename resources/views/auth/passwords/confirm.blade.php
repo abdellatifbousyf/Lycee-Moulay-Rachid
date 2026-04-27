@@ -237,7 +237,7 @@
                                 <div class="confirm-brand-icon">
                                     <i class="fas fa-lock"></i>
                                 </div>
-                                <h2 class="confirm-brand-title">{{ config('app.name', '4ayab') }}</h2>
+                                <h2 class="confirm-brand-title">(ثانوية مولاي رشيد)</h2>
                                 <p class="confirm-brand-subtitle">{{ __('تأكيد كلمة المرور') }}</p>
                             </div>
                         </div>

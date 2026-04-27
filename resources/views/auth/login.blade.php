@@ -248,7 +248,7 @@
                                 <div class="login-brand-icon">
                                     <i class="fas fa-graduation-cap"></i>
                                 </div>
-                                <h2 class="login-brand-title">{{ config('app.name', '4ayab') }}</h2>
+                                <h2 class="login-brand-title">ثانوية مولاي رشيد </h2>
                                 <p class="login-brand-subtitle">{{ __('تسجيل الدخول لمتابعة الغيابات') }}</p>
                             </div>
                         </div>

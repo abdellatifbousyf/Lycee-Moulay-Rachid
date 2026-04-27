@@ -248,7 +248,7 @@
                                 <div class="forgot-brand-icon">
                                     <i class="fas fa-envelope"></i>
                                 </div>
-                                <h2 class="forgot-brand-title">{{ config('app.name', '4ayab') }}</h2>
+                                <h2 class="forgot-brand-title">ثانوية مولاي رشيد  </h2>
                                 <p class="forgot-brand-subtitle">{{ __('نسيت كلمة المرور؟') }}</p>
                             </div>
                         </div>

@@ -236,7 +236,7 @@
                                 <div class="reset-brand-icon">
                                     <i class="fas fa-key"></i>
                                 </div>
-                                <h2 class="reset-brand-title">{{ config('app.name', '4ayab') }}</h2>
+                                <h2 class="reset-brand-title">(ثانوية مولاي رشيد)</h2>
                                 <p class="reset-brand-subtitle">{{ __('إعادة تعيين كلمة المرور') }}</p>
                             </div>
                         </div>
