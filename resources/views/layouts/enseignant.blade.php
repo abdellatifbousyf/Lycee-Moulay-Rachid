@@ -118,13 +118,12 @@
 
                 {{-- Contact Info --}}
                 <div class="col-md-6">
-                    <h5 class="mb-3">ENSET-M</h5>
+                    <h5 class="mb-3">Lycée Moulay Rachid</h5>
                     <p class="text-muted mb-0 small">
                         <i class="fas fa-map-marker-alt me-1"></i>
-                        Ecole Normale Supérieure de l'Enseignement Technique<br>
-                        BP 159 Bd Hassan II, Mohammedia<br>
-                        <i class="fas fa-phone me-1"></i> 05 23 32 22 20 - 05 23 32 35 30<br>
-                        <i class="fas fa-fax me-1"></i> 05 23 32 25 46
+                        Lycée Moulay Rachid Agoulmuse<br>
+                        <i class="fas fa-phone me-1"></i> 05 35 37 00 59 <br>
+                        <i class="fas fa-fax me-1"></i>
                     </p>
                 </div>
             </div>
