@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}"> {{-- ✅ ضروري لـ AJAX --}}
 
-    <title>{{ config('app.name', '4ayab') }} - Espace Professeur</title>
+    <title> ثانوية مولاي رشيد التأهيلية  ـ  أجلموس     - Espace Professeur</title>
 
     {{-- ✅ Fonts --}}
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -131,7 +131,7 @@
             {{-- Copyright --}}
             <hr class="my-4">
             <div class="text-center text-muted small">
-                &copy; {{ date('Y') }} <strong>{{ config('app.name', '4ayab') }}</strong>.
+                &copy; {{ date('Y') }} <strong>ثانوية مولاي رشيد التأهيلية  ـ  أجلموس     </strong>.
                 {{ __('Tous droits réservés.') }}
             </div>
         </div>

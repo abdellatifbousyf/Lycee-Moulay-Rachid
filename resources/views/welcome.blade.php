@@ -152,7 +152,7 @@
                 <i class="fas fa-graduation-cap"></i>
             </div>
 
-            <h1 class="title"> (ثانوية مولاي رشيد التأهيلية ـ أجلموس) </h1>
+            <h1 class="title"> ثانوية مولاي رشيد التأهيلية  ـ  أجلموس     </h1>
             <p class="subtitle">نظام تتبع الغياب الذكي للمؤسسات التعليمية</p>
 
             {{-- <div class="links">
