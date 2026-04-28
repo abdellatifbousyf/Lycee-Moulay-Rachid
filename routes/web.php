@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 // ✅ استيراد الـ Controllers (الطريقة الحديثة فـ Laravel 11+)
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Prof\ProfController;
+//////////////
+use App\Http\Controllers\EtudiantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,3 +71,18 @@ Route::fallback(function () {
 Route::get('/contact', function () {
     return back()->with('info', 'Page de contact en cours de développement.');
 })->name('contact');
+//////////////////////////////////////
+
+// ✅ روطات الطالب
+Route::middleware(['auth'])->prefix('etudiant')->name('etudiant.')->group(function () {
+
+    Route::get('/absences', [EtudiantController::class, 'absences'])
+        ->name('absences');
+
+    Route::get('/notes', [EtudiantController::class, 'notes'])
+        ->name('notes');
+
+    Route::get('/emploi', [EtudiantController::class, 'emploi'])
+        ->name('emploi');
+
+});
