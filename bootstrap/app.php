@@ -33,7 +33,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 //use Throwable;
 
-// ✅ Middleware المخصصة ديال مشروع 4ayab
+// ✅ Middleware المخصصة ديال مشروع 4
 use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\EnsureEmailVerifiedAndRole;
 
@@ -44,7 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
     // ─────────────────────────────────────────────────────────────
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
-       // api: __DIR__.'/../routes/api.php',
+        api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
@@ -131,7 +131,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin/maintenance-bypass',     // ← دخول الأدمن أثناء الصيانة
             'webhook/*',                    // ← Webhooks خارجية
             'stripe/*', 'paypal/*',         // ← مدفوعات
-            'absence/webhook/sync',         // ← مزامنة 4ayab
+            'absence/webhook/sync',         // ← مزامنة 4
             'api/sync/*',                   // ← مزامنة إضافية
         ]);
 
@@ -156,13 +156,13 @@ return Application::configure(basePath: dirname(__DIR__))
         // ✅ 2. الأخطاء اللي ما كيتلوجاش (بديل: $dontReport)
         $exceptions->dontReport([
             NotFoundHttpException::class,           // ← 404 - عادي، ما يحتاجش لوغ
-            // ModelNotFoundException::class,        // ⚠️ سجلها إذا بغيتي تتبع الروابط المكسورة
+             ModelNotFoundException::class,        // ⚠️ س تتبع الروابط المكسورة
         ]);
 
         // ✅ 3. تخصيص الـ Render للاستثناءات (بديل: render() method)
         $exceptions->render(function (Throwable $e, Request $request) {
 
-            // 🎯 أ) تخصيص صفحة 404 لمشروع 4ayab
+            // 🎯 أ) تخصيص صفحة 404 لمشروع 4
             if ($e instanceof NotFoundHttpException) {
 
                 // للـ API: رجع JSON

@@ -29,12 +29,12 @@
                 </div>
 
                 <div class="card-body">
-                    {{-- ✅ الفورم خاصها تكون خارج الـ form-groups و تلف كلشي --}}
+
                     <form action="{{ route('update.student', $etudiant->id) }}" method="POST">
                         @csrf
-                        @method('PUT') {{-- ✅ PUT هو المعيار الرسمي للتحديث فـ Laravel --}}
+                        @method('PUT') {{--  PUT هو المعيار الرسمي للتحديث فـ  --}}
 
-                        {{-- ✅ عرض الأخطاء العامة --}}
+                        {{--  عرض الأخطاء العامة --}}
                         @if ($errors->any())
                             <div class="alert alert-danger alert-dismissible fade show">
                                 <ul class="mb-0">
