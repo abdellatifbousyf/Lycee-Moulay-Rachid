@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ __('تاريخ الغيابات') }} - {{ config('app.name', '4ayab') }}</title>
+    <title>{{ __('تاريخ الغيابات') }} - ثانوية مولاي رشيد      </title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -631,11 +631,11 @@
             {{-- 🦶 Footer --}}
             <footer class="history-footer">
                 <p>
-                    &copy; {{ date('Y') }} <strong>{{ config('app.name', '4ayab') }}</strong>.
+                    &copy; {{ date('Y') }} <strong>ثانوية مولاي رشيد      </strong>.
                     {{ __('جميع الحقوق محفوظة.') }}
                     <br>
                     <small style="opacity: 0.8;">
-                        {{ __('نظام تتبع الغياب الذكي للمؤسسات التعليمية') }}
+                        نظام تتبع الغياب الذكي للثانوية مولاي رشيد
                     </small>
                 </p>
             </footer>

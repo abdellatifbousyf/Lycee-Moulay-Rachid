@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Prof\ProfController;
 //////////////
-use App\Http\Controllers\EtudiantController;
+use App\Http\Controllers\etudiantController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,13 +76,13 @@ Route::get('/contact', function () {
 // ✅ روطات الطالب
 Route::middleware(['auth'])->prefix('etudiant')->name('etudiant.')->group(function () {
 
-    Route::get('/absences', [EtudiantController::class, 'absences'])
+    Route::get('/absences', [etudiantController::class, 'absences'])
         ->name('absences');
 
-    Route::get('/notes', [EtudiantController::class, 'notes'])
+    Route::get('/notes', [etudiantController::class, 'notes'])
         ->name('notes');
 
-    Route::get('/emploi', [EtudiantController::class, 'emploi'])
+    Route::get('/emploi', [etudiantController::class, 'emploi'])
         ->name('emploi');
 
 });

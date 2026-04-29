@@ -311,7 +311,7 @@
                                 <div class="create-brand-icon">
                                     <i class="fas fa-calendar-plus"></i>
                                 </div>
-                                <h2 class="create-brand-title">(ثانوية مولاي رشيد)</h2>
+                                <h2 class="create-brand-title">ثانوية مولاي رشيد      </h2>
                                 <p class="create-brand-subtitle">{{ __('إنشاء حصة دراسية جديدة') }}</p>
                             </div>
                         </div>

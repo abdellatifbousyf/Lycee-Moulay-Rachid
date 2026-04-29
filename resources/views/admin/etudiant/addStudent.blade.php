@@ -91,7 +91,7 @@
                                         id="prenom"
                                         class="form-control @error('prenom') is-invalid @enderror"
                                         value="{{ old('prenom') }}"
-                                        placeholder="مثال: Mohammed"
+                                        placeholder="مثال: ABD-ELLATIF"
                                         required
                                     >
                                     @error('prenom')
@@ -110,7 +110,7 @@
                                         id="nom"
                                         class="form-control @error('nom') is-invalid @enderror"
                                         value="{{ old('nom') }}"
-                                        placeholder="مثال: ALAMI"
+                                        placeholder="مثال: Bousyf"
                                         required
                                     >
                                     @error('nom')
@@ -129,7 +129,7 @@
                                         id="phone"
                                         class="form-control @error('phone') is-invalid @enderror"
                                         value="{{ old('phone') }}"
-                                        placeholder="مثال: 0612345678"
+                                        placeholder= "مثال: 66**00**06
                                         pattern="[0-9]{10}"
                                     >
                                     @error('phone')

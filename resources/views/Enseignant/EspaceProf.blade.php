@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ __('فضاء الأستاذ') }} - {{ config('app.name', '4ayab') }}</title>
+    <title>{{ __('فضاء الأستاذ') }} -ثانوية مولاي رشيد      </title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -474,11 +474,11 @@
             {{-- 🦶 Footer --}}
             <footer class="espace-footer">
                 <p>
-                    &copy; {{ date('Y') }} <strong>{{ config('app.name', '4ayab') }}</strong>.
+                    &copy; {{ date('Y') }} <strong>ثانوية مولاي رشيد      </strong>.
                     {{ __('جميع الحقوق محفوظة.') }}
                     <br>
                     <small style="opacity: 0.8;">
-                        {{ __('صُنع بـ ❤️ لخدمة التعليم في المغرب.') }}
+                        {{ __(' لخدمة التعليم في المغرب.') }}
                     </small>
                 </p>
             </footer>
