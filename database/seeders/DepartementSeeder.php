@@ -17,19 +17,19 @@ class DepartementSeeder extends Seeder
         // ✅ الطريقة الآمنة: تستخدم `firstOrCreate` باش ما يتكرروش البيانات
         Departement::firstOrCreate(
             ['id' => 1],
-            ['nom_dep' => 'Informatique']
+            ['nom_dep' => 'PC']
         );
 
         Departement::firstOrCreate(
             ['id' => 2],
-            ['nom_dep' => 'Mécanique']
+            ['nom_dep' => 'SVT']
         );
 
         // ✅ أو الطريقة الأسرع للإدراج المتعدد (بدون التحقق من التكرار)
         /*
         Departement::insert([
-            ['id' => 1, 'nom_dep' => 'Informatique'],
-            ['id' => 2, 'nom_dep' => 'Mécanique'],
+            ['id' => 1, 'nom_dep' => 'PC'],
+            ['id' => 2, 'nom_dep' => 'SVT'],
         ]);
         */
     }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Prof\ProfController;
 //////////////
-use App\Http\Controllers\etudiantController;
+use App\Http\Controllers\Admin\EtudiantController;
 
 /*
 |--------------------------------------------------------------------------

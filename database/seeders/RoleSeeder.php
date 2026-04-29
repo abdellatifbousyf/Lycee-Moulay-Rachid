@@ -36,13 +36,13 @@ class RoleSeeder extends Seeder
         );
 
         // ✅ أو الطريقة الأسرع للإدراج المتعدد (بدون التحقق من التكرار)
-        /*
+
         Role::insert([
             ['id' => 1, 'type' => 'superadmin'],
             ['id' => 2, 'type' => 'admin'],
             ['id' => 3, 'type' => 'prof'],
             ['id' => 4, 'type' => 'etudiant'],
         ]);
-        */
+
     }
 }

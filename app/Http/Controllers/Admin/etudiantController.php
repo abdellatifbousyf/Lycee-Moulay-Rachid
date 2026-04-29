@@ -166,4 +166,62 @@ class EtudiantController extends Controller
             return back()->with('error', '❌ حدث خطأ أثناء الحذف');
         }
     }
+        // =====================================================
+    // ✅ دوال الطالب (لصفحات العرض - واجهة الطالب)
+    // =====================================================
+
+    /**
+     * عرض صفحة الغيابات للطالب الحالي
+     * Route: etudiant.absences
+     */
+    public function absences(): \Illuminate\View\View
+    {
+        $user = auth()->user();
+
+        // ✅ جلب الغيابات (عدّل حسب الموديل والجداول عندك)
+        $absences = \App\Models\Absence::where('etudiant_id', $user->id)
+            ->with('seance')
+            ->latest()
+            ->paginate(10);
+
+        return view('etudiant.absences', compact('absences'));
+    }
+
+    /**
+     * عرض صفحة النقاط للطالب الحالي
+     * Route: etudiant.notes
+     */
+    public function notes(): \Illuminate\View\View
+    {
+        $user = auth()->user();
+
+        // ✅ جلب النقاط (عدّل حسب الموديل عندك)
+        $notes = \App\Models\Note::where('etudiant_id', $user->id)
+            ->with('matiere', 'evaluation')
+            ->latest()
+            ->get();
+
+        return view('etudiant.notes', compact('notes'));
+    }
+
+    /**
+     * عرض جدول الحصص للطالب الحالي
+     * Route: etudiant.emploi
+     */
+    public function emploi(): \Illuminate\View\View
+    {
+        $user = auth()->user();
+        $classe = $user->classe ?? null;
+
+        // ✅ جلب الجدول (عدّل حسب الموديل عندك)
+        $emploi = $classe ?
+            \App\Models\Emploi::where('classe_id', $classe->id)
+                ->with('matiere', 'professeur', 'salle')
+                ->orderBy('jour')
+                ->orderBy('heure_debut')
+                ->get() : collect();
+
+        return view('etudiant.emploi', compact('emploi', 'classe'));
+    }
 }
+
