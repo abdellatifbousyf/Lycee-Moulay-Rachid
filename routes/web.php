@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+// ✅ Controllers Imports
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Prof\ProfController;
 use App\Http\Controllers\Admin\AdminController;
@@ -12,99 +13,132 @@ use App\Http\Controllers\Admin\EtudiantController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes -
 |--------------------------------------------------------------------------
 */
 
-// ✅ الصفحة الرئيسية
+// ============================================================================
+// 🌐 Routes عامة (بدون مصادقة)
+// ============================================================================
+
+// 🏠 الصفحة الرئيسية
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-// ✅ مسارات المصادقة (تتطلب تثبيت laravel/ui)
+// 🔐 مسارات المصادقة (Laravel UI)
 Auth::routes();
 
-// ✅ لوحة التحكم الافتراضية
+// 🏠 لوحة التحكم الافتراضية (لأي مستخدم)
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-// ✅ مسارات الطالب (محمية بـ auth)
-Route::middleware(['auth'])->prefix('etudiant')->name('etudiant.')->group(function () {
-    Route::view('/espace', 'etudiant.espace-etudiant')->name('espace');
-    // 👉 زيد هنا باقي روابط الطالب مستقبلاً
+// 🔍 بحث عام (اختياري)
+Route::get('/search', function (\Illuminate\Http\Request $request) {
+    return back();
+})->name('search');
+
+// 📞 صفحة الاتصال
+Route::get('/contact', function () {
+    return back()->with('info', 'Page de contact en cours de développement.');
+})->name('contact');
+
+// ❌ صفحة 404 مخصصة
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
 });
 
-// ✅ مسارات الأدمن (محمية بـ auth + middleware مخصص يلا بغيتي)
-Route::middleware(['auth'])->prefix('administration')->name('admin.')->group(function () {
-    Route::view('/dashboard', 'administration.administration')->name('dashboard');
-    // 👉 زيد هنا باقي روابط الأدمن مستقبلاً
+// ============================================================================
+// 👨‍💼 مساحة الأدمن (محمية بـ auth + role:admin)
+// ============================================================================
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+    // 📊 لوحة تحكم الأدمن
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+
+    // 👥 إدارة الطلاب (CRUD كامل)
+    Route::prefix('students')->name('students.')->controller(EtudiantController::class)->group(function () {
+        Route::get('/', 'showAllStudent')->name('show.all');
+        Route::get('/create', 'addStudent')->name('add.form');
+        Route::post('/store', 'saveStudent')->name('save');
+        Route::get('/{id}/edit', 'editStudent')->name('edit.form');
+        Route::put('/{id}/update', 'updateStudent')->name('update');
+        Route::delete('/{id}/delete', 'deleteStudent')->name('delete');
+        // Route::get('/export', 'exportStudents')->name('export'); // اختياري
+    });
+
+    // 📚 إدارة الشعب (مثال - إذا كاين فيليير كونتروور)
+    // Route::resource('filieres', \App\Http\Controllers\Admin\FiliereController::class);
+
+    // ⚙️ إعدادات الأدمن
+    Route::view('/settings', 'admin.settings')->name('settings');
 });
 
-// ✅ مسارات الأستاذ (Espace Prof)
-Route::middleware(['auth'])
+// ============================================================================
+// 👨‍🏫 مساحة الأستاذ (محمية بـ auth + role:prof)
+// ============================================================================
+Route::middleware(['auth', 'role:prof'])
     ->prefix('prof')
     ->name('prof.')
     ->controller(ProfController::class)
     ->group(function () {
 
-        // 👨‍🏫 الصفحة الرئيسية للأستاذ
-        Route::get('/', 'index')->name('home');
+    // 🏠 الصفحة الرئيسية للأستاذ
+    Route::get('/', 'index')->name('home');
+    Route::get('/dashboard', 'index')->name('dashboard');
 
-        // 📅 إدارة الحصص (Seances)
-        Route::get('/seance/create', 'createSeance')->name('seance.create');
-        Route::post('/seance/store', 'saveSeance')->name('seance.store');
-        Route::get('/seances', 'listSeance')->name('seance.index');
+    // 📅 إدارة الحصص (Seances)
+    Route::get('/seance/create', 'createSeance')->name('seance.create');
+    Route::post('/seance/store', 'saveSeance')->name('seance.store');
+    Route::get('/seances', 'listSeance')->name('seance.index');
 
-        // 📝 تسجيل الغياب
-        Route::get('/seance/{seance}/absences', 'pageNoteAbsence')->name('seance.absences');
-        Route::post('/absences/store', 'saveAbsence')->name('absences.store');
+    // 📝 تسجيل الغياب
+    Route::get('/seance/{seance}/absences', 'pageNoteAbsence')->name('seance.absences');
+    Route::post('/absences/store', 'saveAbsence')->name('absences.store');
 
-        // 📊 تاريخ الغياب
-        Route::get('/absences/history', 'historiqueAbsence')->name('absences.history');
-    });
-
-// ✅ Route للـ 404 (اختياري)
-Route::fallback(function () {
-    return response()->view('errors.404', [], 404);
-});
-// ✅ Route لصفحة الاتصال (مؤقتة)
-Route::get('/contact', function () {
-    return back()->with('info', 'Page de contact en cours de développement.');
-})->name('contact');
-//////////////////////////////////////
-
-// ✅ روطات الطالب
-Route::middleware(['auth'])->prefix('etudiant')->name('etudiant.')->group(function () {
-
-    Route::get('/absences', [etudiantController::class, 'absences'])
-        ->name('absences');
-
-    Route::get('/notes', [etudiantController::class, 'notes'])
-        ->name('notes');
-
-    Route::get('/emploi', [etudiantController::class, 'emploi'])
-        ->name('emploi');
-
-
-       // dmin
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    // 📊 تاريخ الغياب
+    Route::get('/absences/history', 'historiqueAbsence')->name('absences.history');
 });
 
-// ✅ روتات Prof
-Route::middleware(['auth', 'role:prof'])->prefix('prof')->name('prof.')->group(function () {
-    Route::get('/dashboard', [ProfController::class, 'index'])->name('dashboard');
+// ============================================================================
+// 👨‍🎓 مساحة الطالب (محمية بـ auth + role:etudiant)
+// ============================================================================
+Route::middleware(['auth', 'role:etudiant'])
+    ->prefix('etudiant')
+    ->name('etudiant.')
+    ->group(function () {
+
+    // 🏠 الصفحة الرئيسية للطالب
+    Route::view('/espace', 'etudiant.espace-etudiant')->name('espace');
+    Route::view('/dashboard', 'etudiant.dashboard')->name('dashboard');
+
+    // 📋 غياباتي
+    Route::get('/absences', [EtudiantController::class, 'absences'])->name('absences');
+
+    // 📊 نقاطي
+    Route::get('/notes', [EtudiantController::class, 'notes'])->name('notes');
+
+    // 📅 جدولي
+    Route::get('/emploi', [EtudiantController::class, 'emploi'])->name('emploi');
+
+    // 👤 ملفي
+    Route::view('/profile', 'etudiant.profile')->name('profile');
 });
-// ✅ روطات الأدمن
-Route::get('/admin/students', [EtudiantController::class, 'showAllStudent'])->name('admin.students.show.all');
-Route::get('/admin/students/create', [EtudiantController::class, 'addStudent'])->name('admin.students.add.form');
-Route::post('/admin/students/store', [EtudiantController::class, 'saveStudent'])->name('admin.students.save');
-Route::get('/admin/students/{id}/edit', [EtudiantController::class, 'editStudent'])->name('admin.students.edit.form');
-Route::put('/admin/students/{id}/update', [EtudiantController::class, 'updateStudent'])->name('admin.students.update');
-Route::delete('/admin/students/{id}/delete', [EtudiantController::class, 'deleteStudent'])->name('admin.students.delete');
 
-// ✅ روطات الطالب
-Route::get('/etudiant/absences', [EtudiantController::class, 'absences'])->name('etudiant.absences');
-Route::get('/etudiant/notes', [EtudiantController::class, 'notes'])->name('etudiant.notes');
-Route::get('/etudiant/emploi', [EtudiantController::class, 'emploi'])->name('etudiant.emploi');
+// ============================================================================
+// 🔄 Routes للـ Redirect (اختياري - لتوجيه المستخدمين حسب الدور)
+// ============================================================================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/redirect', function () {
+        $role = auth()->user()->role ?? 'etudiant';
 
+        return match($role) {
+            'admin' => redirect()->route('admin.dashboard'),
+            'prof' => redirect()->route('prof.home'),
+            'etudiant' => redirect()->route('etudiant.espace'),
+            default => redirect()->route('home'),
+        };
+    })->name('redirect');
 });
