@@ -85,4 +85,15 @@ Route::middleware(['auth'])->prefix('etudiant')->name('etudiant.')->group(functi
     Route::get('/emploi', [etudiantController::class, 'emploi'])
         ->name('emploi');
 
+
+       // dmin
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+});
+
+// ✅ روتات Prof
+Route::middleware(['auth', 'role:prof'])->prefix('prof')->name('prof.')->group(function () {
+    Route::get('/dashboard', [ProfController::class, 'index'])->name('dashboard');
+});
+
 });

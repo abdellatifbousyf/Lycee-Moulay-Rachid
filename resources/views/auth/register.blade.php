@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ __('Register') }} - {{ config('app.name', '4ayab') }}</title>
+    <title>{{ __('Register') }} - ثانوية مولاي رشيد </title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -388,7 +388,7 @@
 
                     {{-- حقوق النشر --}}
                     <div class="text-center mt-4" style="color: rgba(255,255,255,0.8); font-size: 0.85rem;">
-                        &copy; {{ date('Y') }} {{ config('app.name', '4ayab') }}. {{ __('جميع الحقوق محفوظة.') }}
+                        &copy; {{ date('Y') }} ثانوية مولاي رشيد . {{ __('جميع الحقوق محفوظة.') }}
                     </div>
                 </div>
             </div>

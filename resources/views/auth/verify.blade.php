@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ __('Verify Email') }} - {{ config('app.name', '4ayab') }}</title>
+    <title>{{ __('Verify Email') }} -ثانوية مولاي رشيد </title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
