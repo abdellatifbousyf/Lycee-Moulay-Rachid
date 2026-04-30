@@ -12,8 +12,13 @@ use Illuminate\Support\Facades\Log;
 
 class EtudiantController extends Controller
 {
+    // =========================================================================
+    // 🔹 قسم الأدمن: إدارة الطلاب (CRUD)
+    // =========================================================================
+
     /**
      * Show the form to add a new student (4ayab project).
+     * Route: admin.students.add.form
      */
     public function addStudent(): View
     {
@@ -24,10 +29,11 @@ class EtudiantController extends Controller
 
     /**
      * Display all students with their filiere.
+     * Route: admin.students.show.all
      */
     public function showAllStudent(): View
     {
-        // ✅ استخدام lazy loading عشان الأداء (إذا عندك بزاف دالتلاميد)
+        // ✅ استخدام eager loading لتحسين الأداء
         $students = Etudiant::with('filiere')->latest()->paginate(15);
 
         return view('admin.etudiant.showAll', compact('students'));
@@ -35,10 +41,11 @@ class EtudiantController extends Controller
 
     /**
      * Store a newly created student in database.
+     * Route: admin.students.save (POST)
      */
     public function saveStudent(Request $request): RedirectResponse
     {
-        // ✅ 1. التحقق من البيانات (بدون مسافات زائدة)
+        // ✅ 1. التحقق من البيانات
         $validated = $request->validate([
             'nom'      => 'required|string|max:255',
             'prenom'   => 'required|string|max:255',
@@ -46,28 +53,28 @@ class EtudiantController extends Controller
             'phone'    => 'required|numeric|digits:10',
             'filiere'  => 'required|exists:fileres,id',
         ], [
-            // ✅ رسائل خطأ مخصصة (اختياري)
             'cne.unique' => 'هذا CNE مسجل مسبقاً',
             'phone.digits' => 'رقم الهاتف يجب أن يتكون من 10 أرقام',
         ]);
 
         try {
-            // ✅ 2. إنشاء الطالب (استخدم $fillable فـ الـ Model)
+            // ✅ 2. إنشاء الطالب
             Etudiant::create([
                 'cne'        => $validated['cne'],
                 'nom_etu'    => $validated['nom'],
                 'prenom_etu' => $validated['prenom'],
                 'phone_etu'  => $validated['phone'],
                 'id_filiere' => $validated['filiere'],
-                'id_user'    => auth()->id(), // ✅ أفضل من hardcoded 4
+                'id_user'    => auth()->id(),
             ]);
 
+            // ✅ ✅ ✅ Route مصحح (مهم جداً!)
             return redirect()
-                ->route('show.all.student')
+                ->route('admin.students.show.all')
                 ->with('success', '✅ تم إضافة التلميذ بنجاح');
 
         } catch (\Exception $e) {
-            // ✅ 3. تسجيل الخطأ فـ الـ Log بدلاً من عرضو للمستخدم
+            // ✅ 3. تسجيل الخطأ فـ الـ Log
             Log::error('4ayab: Failed to add student - ' . $e->getMessage(), [
                 'user_id' => auth()->id(),
                 'payload' => $request->all(),
@@ -81,15 +88,16 @@ class EtudiantController extends Controller
 
     /**
      * Show the form for editing the specified student.
+     * Route: admin.students.edit.form
      */
     public function editStudent(int $id): View|RedirectResponse
     {
-        // ✅ استخدام Route Model Binding أو findOrFail
         $etudiant = Etudiant::find($id);
 
         if (!$etudiant) {
+            // ✅ ✅ ✅ Route مصحح
             return redirect()
-                ->route('show.all.student')
+                ->route('admin.students.show.all')
                 ->with('error', '⚠️ التلميذ غير موجود');
         }
 
@@ -100,6 +108,7 @@ class EtudiantController extends Controller
 
     /**
      * Update the specified student in database.
+     * Route: admin.students.update (PUT)
      */
     public function updateStudent(Request $request): RedirectResponse
     {
@@ -121,11 +130,11 @@ class EtudiantController extends Controller
                 'prenom_etu' => $validated['prenom'],
                 'phone_etu'  => $validated['phone'] ?? $etudiant->phone_etu,
                 'id_filiere' => $validated['filiere'],
-                // 'id_user' => auth()->id(), // اختياري: إذا بغيتي تحدث المستخدم المسؤول
             ]);
 
+            // ✅ ✅ ✅ Route مصحح
             return redirect()
-                ->route('show.all.student')
+                ->route('admin.students.show.all')
                 ->with('update', '✅ تم تعديل بيانات التلميذ بنجاح');
 
         } catch (\Exception $e) {
@@ -138,27 +147,26 @@ class EtudiantController extends Controller
     }
 
     /**
-     * Remove the specified student from database (Soft Delete recommended).
+     * Remove the specified student from database.
+     * Route: admin.students.delete (DELETE)
      */
     public function deleteStudent(int $id): RedirectResponse
     {
         try {
             $student = Etudiant::findOrFail($id);
 
-            // ✅ الخيار 1: حذف نهائي
-            // $student->delete();
-
-            // ✅ الخيار 2 (موصى به): Soft Delete (باش ما تضيعش البيانات)
-            // تأكد أن الـ Model فيها: use SoftDeletes;
+            // ✅ الحذف (يمكن تفعيل SoftDeletes إذا بغيتي)
             $student->delete();
 
+            // ✅ ✅ ✅ Route مصحح
             return redirect()
-                ->route('show.all.student')
+                ->route('admin.students.show.all')
                 ->with('delete', '🗑️ تم حذف التلميذ بنجاح');
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // ✅ ✅ ✅ Route مصحح
             return redirect()
-                ->route('show.all.student')
+                ->route('admin.students.show.all')
                 ->with('error', '⚠️ التلميذ غير موجود');
         } catch (\Exception $e) {
             Log::error('4ayab: Failed to delete student - ' . $e->getMessage());
@@ -166,23 +174,27 @@ class EtudiantController extends Controller
             return back()->with('error', '❌ حدث خطأ أثناء الحذف');
         }
     }
-        // =====================================================
-    // ✅ دوال الطالب (لصفحات العرض - واجهة الطالب)
-    // =====================================================
+
+    // =========================================================================
+    // 🔹 قسم الطالب: واجهة العرض (للتلاميذ)
+    // =========================================================================
 
     /**
      * عرض صفحة الغيابات للطالب الحالي
      * Route: etudiant.absences
      */
-    public function absences(): \Illuminate\View\View
+    public function absences(): View
     {
         $user = auth()->user();
 
         // ✅ جلب الغيابات (عدّل حسب الموديل والجداول عندك)
-        $absences = \App\Models\Absence::where('etudiant_id', $user->id)
-            ->with('seance')
-            ->latest()
-            ->paginate(10);
+        // إذا ماكاينش موديل Absence بعد، خلي: $absences = collect();
+        $absences = class_exists(\App\Models\Absence::class)
+            ? \App\Models\Absence::where('etudiant_id', $user->id)
+                ->with('seance')
+                ->latest()
+                ->paginate(10)
+            : collect();
 
         return view('etudiant.absences', compact('absences'));
     }
@@ -191,15 +203,18 @@ class EtudiantController extends Controller
      * عرض صفحة النقاط للطالب الحالي
      * Route: etudiant.notes
      */
-    public function notes(): \Illuminate\View\View
+    public function notes(): View
     {
         $user = auth()->user();
 
         // ✅ جلب النقاط (عدّل حسب الموديل عندك)
-        $notes = \App\Models\Note::where('etudiant_id', $user->id)
-            ->with('matiere', 'evaluation')
-            ->latest()
-            ->get();
+        // إذا ماكاينش موديل Note بعد، خلي: $notes = collect();
+        $notes = class_exists(\App\Models\Note::class)
+            ? \App\Models\Note::where('etudiant_id', $user->id)
+                ->with('matiere', 'evaluation')
+                ->latest()
+                ->get()
+            : collect();
 
         return view('etudiant.notes', compact('notes'));
     }
@@ -208,20 +223,21 @@ class EtudiantController extends Controller
      * عرض جدول الحصص للطالب الحالي
      * Route: etudiant.emploi
      */
-    public function emploi(): \Illuminate\View\View
+    public function emploi(): View
     {
         $user = auth()->user();
         $classe = $user->classe ?? null;
 
         // ✅ جلب الجدول (عدّل حسب الموديل عندك)
-        $emploi = $classe ?
-            \App\Models\Emploi::where('classe_id', $classe->id)
+        // إذا ماكاينش موديل Emploi بعد، خلي: $emploi = collect();
+        $emploi = ($classe && class_exists(\App\Models\Emploi::class))
+            ? \App\Models\Emploi::where('classe_id', $classe->id)
                 ->with('matiere', 'professeur', 'salle')
                 ->orderBy('jour')
                 ->orderBy('heure_debut')
-                ->get() : collect();
+                ->get()
+            : collect();
 
         return view('etudiant.emploi', compact('emploi', 'classe'));
     }
 }
-

@@ -5,10 +5,9 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-// ✅ استيراد الـ Controllers (الطريقة الحديثة فـ Laravel 11+)
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Prof\ProfController;
-//////////////
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\EtudiantController;
 
 /*
@@ -95,5 +94,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:prof'])->prefix('prof')->name('prof.')->group(function () {
     Route::get('/dashboard', [ProfController::class, 'index'])->name('dashboard');
 });
+// ✅ روطات الأدمن
+Route::get('/admin/students', [EtudiantController::class, 'showAllStudent'])->name('admin.students.show.all');
+Route::get('/admin/students/create', [EtudiantController::class, 'addStudent'])->name('admin.students.add.form');
+Route::post('/admin/students/store', [EtudiantController::class, 'saveStudent'])->name('admin.students.save');
+Route::get('/admin/students/{id}/edit', [EtudiantController::class, 'editStudent'])->name('admin.students.edit.form');
+Route::put('/admin/students/{id}/update', [EtudiantController::class, 'updateStudent'])->name('admin.students.update');
+Route::delete('/admin/students/{id}/delete', [EtudiantController::class, 'deleteStudent'])->name('admin.students.delete');
+
+// ✅ روطات الطالب
+Route::get('/etudiant/absences', [EtudiantController::class, 'absences'])->name('etudiant.absences');
+Route::get('/etudiant/notes', [EtudiantController::class, 'notes'])->name('etudiant.notes');
+Route::get('/etudiant/emploi', [EtudiantController::class, 'emploi'])->name('etudiant.emploi');
 
 });
